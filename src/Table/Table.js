@@ -4,12 +4,12 @@ function Table(props) {
     <table className="table">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>E-mail</th>
-          <th>Phone</th>
-          <th>Phone</th>
+          <th onClick={props.onSort.bind(null, "id")}>ID</th>
+          <th onClick={props.onSort.bind(null, "firstName")}>First Name</th>
+          <th onClick={props.onSort.bind(null, "lastName")}>Last Name</th>
+          <th onClick={props.onSort.bind(null, "email")}>E-mail</th>
+          <th onClick={props.onSort.bind(null, "phone")}>Phone</th>
+          <th onClick={props.onSort.bind(null, "address")}>Address</th>
           <th>Description</th>
         </tr>
       </thead>
@@ -22,10 +22,18 @@ function Table(props) {
             <td>{item.email}</td>
             <td>{item.phone}</td>
             <td>
-              <p><strong>City:</strong> {item.address.city}</p>
-              <p><strong>State:</strong> {item.address.state}</p>
-              <p><strong>Zip:</strong> {item.address.zip}</p>
-              <p><strong>Street:</strong> {item.address.streetAddress}</p>
+              <p>
+                <strong>City:</strong> {item.address.city}
+              </p>
+              <p>
+                <strong>State:</strong> {item.address.state}
+              </p>
+              <p>
+                <strong>Zip:</strong> {item.address.zip}
+              </p>
+              <p>
+                <strong>Street:</strong> {item.address.streetAddress}
+              </p>
             </td>
             <td>{item.description}</td>
           </tr>
