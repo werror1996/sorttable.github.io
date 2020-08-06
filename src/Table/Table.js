@@ -22,7 +22,6 @@ function Table(props) {
           <th style={style} onClick={props.onSort.bind(null, "phone")}>
             Phone {props.sortField === "phone" ? <small>{props.sort}</small> : null}</th>
           <th style={style}>Address</th>
-          <th style={style}>Description</th>
         </tr>
       </thead>
       <tbody>
@@ -45,7 +44,6 @@ function Table(props) {
                 <strong>Street:</strong> {item.address.streetAddress}
               </p>
             </td>
-            <td>{item.description}</td>
           </tr>
         ))}
       </tbody>

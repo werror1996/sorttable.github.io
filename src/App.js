@@ -12,23 +12,13 @@ class App extends Component {
     isModeSelcet: false,
     isLoading: false,
     data: [],
+    search: "",
     sort: "asc",
     sortField: "id",
     row: null,
     currentPage: 0,
+    person: null,
   };
-
-  async componentDidMount() {
-    const response = await fetch(
-      `http://www.filltext.com/?rows=32&id=%7Bnumber%7C1000%7D&firstName=%7BfirstName%7D&lastName=%7BlastName%7D&email=%7Bemail%7D&phone=%7Bphone%7C(xxx)xxx-xx-xx%7D&address=%7BaddressObject%7D&description=%7Blorem%7C32%7D`
-    );
-    const data = await response.json();
-    // console.log(data);
-    this.setState({
-      isLoading: false,
-      data: _.orderBy(data, this.state.sortField, this.state.sort),
-    });
-  }
 
   async fetchData(url) {
     const response = await fetch(url);
@@ -45,15 +35,7 @@ class App extends Component {
     const sort = this.state.sort === "asc" ? "desc" : "asc";
     const data = _.orderBy(cloneData, sortField, sort);
 
-    this.setState({
-      data,
-      sort,
-      sortField,
-    });
-  };
-
-  onRowSelect = (row) => {
-    this.setState({ row });
+    this.setState({ data, sort, sortField });
   };
 
   modeSelectHandler = (url) => {
@@ -64,15 +46,36 @@ class App extends Component {
     this.fetchData(url);
   };
 
+  onRowSelect = (row) => {
+    this.setState({ row });
+  };
+
   pageChangedHandler = ({ selected }) => {
     this.setState({ currentPage: selected });
   };
 
+  searchHandler = (search) => {
+    this.setState({ search, currentPage: 0 });
+  };
+
+  getFilteredData() {
+    const { data, search } = this.state;
+
+    if (!search) {
+      return data;
+    }
+
+    return data.filter((item) => {
+      return (
+        item["firstName"].toLowerCase().includes(search.toLowerCase()) ||
+        item["lastName"].toLowerCase().includes(search.toLowerCase()) ||
+        item["email"].toLowerCase().includes(search.toLowerCase())
+      );
+    });
+  }
+
   render() {
     const pageSize = 50;
-    const displayData = _.chunk(this.state.data, pageSize)[
-      this.state.currentPage
-    ];
 
     if (!this.state.isModeSelcet) {
       return (
@@ -81,13 +84,17 @@ class App extends Component {
         </div>
       );
     }
+    const filteredData = this.getFilteredData();
+    const pageCount = Math.ceil(filteredData.length / pageSize);
+    const displayData = _.chunk(filteredData, pageSize)[this.state.currentPage];
+
     return (
-      <div className="container-fluid">
+      <div className="container">
         {this.state.isLoading ? (
           <Loader />
         ) : (
           <React.Fragment>
-            <TableSearch onSearch={this.searchHandler}/>
+            <TableSearch onSearch={this.searchHandler} />
             <Table
               data={displayData}
               onSort={this.onSort}
@@ -103,7 +110,7 @@ class App extends Component {
             nextLabel={">"}
             breakLabel={"..."}
             breakClassName={"break-me"}
-            pageCount={20}
+            pageCount={pageCount}
             marginPagesDisplayed={2}
             pageRangeDisplayed={5}
             onPageChange={this.pageChangedHandler}
